@@ -1,0 +1,5 @@
+destination_folder:/Volumes/HDD/Carpetas/Springer Books
+subject_clasification:True
+download_ePubs:False
+filter_sujects:False
+subjects:
