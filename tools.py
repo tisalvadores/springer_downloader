@@ -33,6 +33,41 @@ def get_metadata(metadata_file):
     df['epub_url'] = url.apply(lambda url: epub_url(url))
     return df
 
+def parse_params(params):
+    params = {i[0]: i[1].strip() for i in [j.split(':') for j in params]}
+
+    if params['destination_folder'][-1] != '/':
+        params['destination_folder'] += '/'
+    params['subject_classify'] = params['subject_classify'] == 'True'
+    params['download_ePubs'] = params['download_ePubs'] == 'True'
+    params['filter_subjects'] = params['filter_subjects'] == 'True'
+    params['subjects'] = [i.strip() for i in params['subjects'].split(',')]
+    params['chunks'] = params['chunks'] == 'True'
+    params['chunk'] = [int(i) for i in params['chunk'].split('-')]
+
+    return params
+
+def apply_params(meta, params):
+    if params['subject_classify']:
+        meta['path'] = meta.apply(lambda row:
+        params['destination_folder'] + row['subject'] + '/', axis=1)
+    else:
+        meta['path'] = params['destination_folder']
+
+    if not params['download_ePubs']:
+        meta['epub_url'] = None
+
+    if params['chunks']:
+        first = params['chunk'][0]
+        last = params['chunk'][1]
+        meta.drop(meta[~meta.index.isin(list(range(first, last)))].index,
+                    inplace=True)
+                    
+    if params['filter_subjects']:
+        meta.drop(meta[~meta['subject'].isin(params['subjects'])].index,
+                    inplace=True)
+    return meta
+
 
 if __name__ == '__main__':
     begin = time.time()
@@ -41,12 +76,12 @@ if __name__ == '__main__':
 #    print(meta['subject'].drop_duplicates())
     print(','.join(list(meta['subject'].drop_duplicates())))
     print(time.time()-begin)
-#print(meta['epub_url'].isnull())
-#print(meta[~meta['epub_url'].isnull()]['epub_url'])
-#print(meta['epub_url'][0]!=None)
-#with open('/Volumes/HDD/Carpetas/Springer Books/hello.epub','wb') as file:
-#    book = get_book(meta['epub_url'][0])
-#print([bool(i) for i in meta['epub_url']])
+#    print(meta['epub_url'].isnull())
+#    print(meta[~meta['epub_url'].isnull()]['epub_url'])
+#    print(meta['epub_url'][0]!=None)
+#    with open('/Volumes/HDD/Carpetas/Springer Books/hello.epub','wb') as file:
+#        book = get_book(meta['epub_url'][0])
+#    print([bool(i) for i in meta['epub_url']])
 
-#for index, row in meta.iterrows():
-#    print(row['pdf_url'])
+#    for index, row in meta.iterrows():
+#        print(row['pdf_url'])

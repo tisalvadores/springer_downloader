@@ -1,5 +1,7 @@
 destination_folder:/Volumes/HDD/Carpetas/Springer Books
-subject_clasification:True
-download_ePubs:False
-filter_sujects:False
-subjects:
+subject_classify: True
+download_ePubs: False
+filter_subjects: True
+subjects: Mathematics, Social Sciences
+chunks: True
+chunk: 2-4

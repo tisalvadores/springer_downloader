@@ -1,21 +1,20 @@
 import os
-from tools import get_metadata, get_book
+import pandas as pd
+import numpy as np
+from tools import get_metadata, get_book, parse_params, apply_params
 
-
-meta = get_metadata('Free+English+textbooks 2.xlsx')
+if os.path.exists('./meta_cache.csv'):
+    meta = pd.read_csv('meta_cache.csv')
+    meta.replace({np.nan: None}, inplace=True)
+else:
+    meta = get_metadata('Free+English+textbooks 2.xlsx')
+    meta.to_csv('meta_cache.csv', header=True)
 
 with open('params.txt') as file:
-    lines = file.read().strip().split('\n')
-    params = {i[0]: i[1].strip().lower() for i in [j.split(':') for j in lines]}
+    params = file.read().strip().split('\n')
 
-if params['destination_folder'][-1] != '/':
-    params['destination_folder'] += '/'
-
-if params['subject_clasification'] == 'true':
-    meta['path'] = meta.apply(lambda row:
-    params['destination_folder'] + row['subject'] + '/', axis=1)
-else:
-    meta['path'] = params['destination_folder']
+params = parse_params(params)
+meta = apply_params(meta, params)
 
 for index, row in meta.iterrows():
     title = row['title']
@@ -33,7 +32,7 @@ for index, row in meta.iterrows():
                 if os.path.exists(file_path):
                     os.remove(file_path)
 
-    if row['epub_url']:
+    if row['epub_url'] and params['download_ePubs']:
         file_path = row['path'] + row['title'] + '.epub'
         if not os.path.exists(file_path):
             with open(row['path'] + row['title'] + '.epub', 'wb') as file:
