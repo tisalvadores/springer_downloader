@@ -1,6 +1,7 @@
 import time
 import requests
 import pandas as pd
+from tqdm import tqdm
 
 def get_book(url):
     r = requests.get(url)
@@ -23,6 +24,8 @@ def epub_url(url):
     return None
 
 def get_metadata(metadata_file):
+    print('''Generating metadata.
+This should take a couple minutes and will only happen on the fist execution.''')
     df = pd.read_excel(metadata_file)
     df = df[['Book Title', 'DOI URL', 'Subject Classification']]
     df.columns = ['title', 'pdf_url', 'subject']
@@ -30,7 +33,9 @@ def get_metadata(metadata_file):
     df['subject'] = df['subject'].apply(lambda subs: subs.split('; ')[0])
     url = df['pdf_url']
     df['pdf_url'] = url.apply(lambda url: pdf_url(url))
-    df['epub_url'] = url.apply(lambda url: epub_url(url))
+    tqdm.pandas()
+    df['epub_url'] = url.progress_apply(lambda url: epub_url(url))
+    print("Done.\n")
     return df
 
 def parse_params(params):
@@ -62,7 +67,7 @@ def apply_params(meta, params):
         last = params['chunk'][1]
         meta.drop(meta[~meta.index.isin(list(range(first, last)))].index,
                     inplace=True)
-                    
+
     if params['filter_subjects']:
         meta.drop(meta[~meta['subject'].isin(params['subjects'])].index,
                     inplace=True)
@@ -70,12 +75,13 @@ def apply_params(meta, params):
 
 
 if __name__ == '__main__':
-    begin = time.time()
-    meta = get_metadata('Free+English+textbooks.xlsx')
-    print(time.time()-begin)
+    pass
+#    begin = time.time()
+#    meta = get_metadata('Free+English+textbooks.xlsx')
+#    print(time.time()-begin)
 #    print(meta['subject'].drop_duplicates())
-    print(','.join(list(meta['subject'].drop_duplicates())))
-    print(time.time()-begin)
+#    print(','.join(list(meta['subject'].drop_duplicates())))
+#    print(time.time()-begin)
 #    print(meta['epub_url'].isnull())
 #    print(meta[~meta['epub_url'].isnull()]['epub_url'])
 #    print(meta['epub_url'][0]!=None)

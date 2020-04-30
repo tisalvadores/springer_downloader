@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 from tools import get_metadata, get_book, parse_params, apply_params
 
 if os.path.exists('./meta_cache.csv'):
@@ -15,6 +16,8 @@ with open('params.txt') as file:
 
 params = parse_params(params)
 meta = apply_params(meta, params)
+print('Downloading books...')
+loop = tqdm(total=meta.shape[0])
 
 for index, row in meta.iterrows():
     title = row['title']
@@ -23,7 +26,7 @@ for index, row in meta.iterrows():
 
     file_path = row['path'] + row['title'] + '.pdf'
     if not os.path.exists(file_path):
-        with open(row['path'] + row['title'] + '.pdf', 'wb') as file:
+        with open(file_path, 'wb') as file:
             try:
                 book = get_book(row['pdf_url'])
                 file.write(book)
@@ -35,7 +38,7 @@ for index, row in meta.iterrows():
     if row['epub_url'] and params['download_ePubs']:
         file_path = row['path'] + row['title'] + '.epub'
         if not os.path.exists(file_path):
-            with open(row['path'] + row['title'] + '.epub', 'wb') as file:
+            with open(file_path, 'wb') as file:
                 try:
                     book = get_book(row['epub_url'])
                     file.write(book)
@@ -43,3 +46,4 @@ for index, row in meta.iterrows():
                     print(f'Error descargando {title}.epub')
                     if os.path.exists(file_path):
                         os.remove(file_path)
+    loop.update(1)
