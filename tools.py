@@ -44,7 +44,7 @@ def parse_params(params):
     if params['destination_folder'][-1] != '/':
         params['destination_folder'] += '/'
     params['subject_classify'] = params['subject_classify'] == 'True'
-    params['download_ePubs'] = params['download_ePubs'] == 'True'
+    params['download_epubs'] = params['download_epubs'] == 'True'
     params['filter_subjects'] = params['filter_subjects'] == 'True'
     params['subjects'] = [i.strip() for i in params['subjects'].split(',')]
     params['chunks'] = params['chunks'] == 'True'
@@ -59,7 +59,7 @@ def apply_params(meta, params):
     else:
         meta['path'] = params['destination_folder']
 
-    if not params['download_ePubs']:
+    if not params['download_epubs']:
         meta['epub_url'] = None
 
     if params['chunks']:
@@ -72,22 +72,3 @@ def apply_params(meta, params):
         meta.drop(meta[~meta['subject'].isin(params['subjects'])].index,
                     inplace=True)
     return meta
-
-
-if __name__ == '__main__':
-    pass
-#    begin = time.time()
-#    meta = get_metadata('Free+English+textbooks.xlsx')
-#    print(time.time()-begin)
-#    print(meta['subject'].drop_duplicates())
-#    print(','.join(list(meta['subject'].drop_duplicates())))
-#    print(time.time()-begin)
-#    print(meta['epub_url'].isnull())
-#    print(meta[~meta['epub_url'].isnull()]['epub_url'])
-#    print(meta['epub_url'][0]!=None)
-#    with open('/Volumes/HDD/Carpetas/Springer Books/hello.epub','wb') as file:
-#        book = get_book(meta['epub_url'][0])
-#    print([bool(i) for i in meta['epub_url']])
-
-#    for index, row in meta.iterrows():
-#        print(row['pdf_url'])

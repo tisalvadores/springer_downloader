@@ -35,7 +35,7 @@ for index, row in meta.iterrows():
                 if os.path.exists(file_path):
                     os.remove(file_path)
 
-    if row['epub_url'] and params['download_ePubs']:
+    if row['epub_url'] and params['download_epubs']:
         file_path = row['path'] + row['title'] + '.epub'
         if not os.path.exists(file_path):
             with open(file_path, 'wb') as file:
