@@ -56,9 +56,9 @@ parameter.
 
 ## Dependencies
 
-The program Pandas, NumPy and tqdm libraries, so make sure to have them
-installed. tqdm's version must be higher than 4.8. Then you are ready to pull
-clone the repository and run it.
+The program uses Pandas, NumPy and tqdm libraries, so make sure to have them
+installed. tqdm's version must be higher than 4.8. Having them, you are ready
+to clone the repository and run it.
 
 
 ## Subjects

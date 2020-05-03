@@ -30,6 +30,7 @@ This should take a couple minutes and will only happen on the fist execution.'''
     df = df[['Book Title', 'DOI URL', 'Subject Classification']]
     df.columns = ['title', 'pdf_url', 'subject']
 
+    df['title'] = df['title'].apply(lambda title: title.replace('/', '-'))
     df['subject'] = df['subject'].apply(lambda subs: subs.split('; ')[0])
     url = df['pdf_url']
     df['pdf_url'] = url.apply(lambda url: pdf_url(url))

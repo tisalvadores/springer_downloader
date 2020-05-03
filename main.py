@@ -8,7 +8,7 @@ if os.path.exists('./meta_cache.csv'):
     meta = pd.read_csv('meta_cache.csv')
     meta.replace({np.nan: None}, inplace=True)
 else:
-    meta = get_metadata('Free+English+textbooks 2.xlsx')
+    meta = get_metadata('Free+English+textbooks.xlsx')
     meta.to_csv('meta_cache.csv', header=True)
 
 with open('params.txt') as file:
